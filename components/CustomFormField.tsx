@@ -13,6 +13,8 @@ import { FormFieldType } from "./forms/PatientForm";
 import Image from "next/image";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
+import { E164Number } from "libphonenumber-js";
+
 
 interface CustomProps {
   control: Control<any>,
@@ -27,6 +29,15 @@ interface CustomProps {
   showTimeSelect?: boolean,
   children?: React.ReactNode,
   renderSkeleton?: (field: any) => React.ReactNode,
+}
+export enum FormFieldType{
+  INPUT = "input",
+  TEXTAREA = "textarea",
+  CHECKBOX = "checkbox",
+  PHONE_INPUT = "phoneInput",
+  DATE_PICKER = "datePicker",
+  SELECT = "select",
+SKELETON = "skeleton",
 }
 
 const RenderField = ({ field, props }: { field: any; props: CustomProps}) => {
