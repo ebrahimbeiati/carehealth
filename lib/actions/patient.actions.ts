@@ -44,3 +44,13 @@ export const createUser = async (user: CreateUserParams) => {
     throw error; // Re-throw to be handled by calling function
   }
 };
+
+export const getUser = async (userId: string) => {
+  try {
+    const user = await users.get(userId);
+    return parseStringify(user);
+  } catch (error) {
+    console.error("Error fetching user:", error); // Log detailed error
+    throw error; // Re-throw to be handled by calling function
+  }
+};

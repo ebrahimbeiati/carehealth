@@ -1,40 +1,133 @@
-import Image from "next/image";
-import Link from "next/link";
-const RegisterForm = () => {
-    return (
-    
-    <div className="flex h-screen max-h-screen">
-      {/* Otp verification*/}
-      <section className="remove-scrollbar container my-auto">
-        <div className="sub-container max-w[496]">
-          <Image
-            src="/logo.png"
-            alt="logo"
-            width={496}
-            height={496}
-            className="mb-12 h-10 w-fit rounded"
-                  />
-                  
-          <div className="flex justify-between text-14-regular mt-20">
-            <p className="text-dark-600 justify-end xl:text-left">
-              Care Health © All rights reserved.
-            </p>
-            <Link className="text-green-500" href="/?admin=true">
-              Admin
-            </Link>
+"use client";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Form, FormControl, FormField } from "@/components/ui/form";
+import CustomFormField from "../CustomFormField";
+import SubmitButton from "../SubmitButton";
+import { useState } from "react";
+import { UserFormValidation } from "@/lib/validation";
+import { useRouter } from "next/navigation";
+import { createUser } from "@/lib/actions/patient.actions";
+import { FormFieldType } from "./PatientForm";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { GenderOptions } from "@/constants";
+import { Label } from "../ui/label";
+
+
+
+
+const RegisterForm = ({user}:{user:User}) => {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  // 1. Define your form.
+  const form = useForm<z.infer<typeof UserFormValidation>>({
+    resolver: zodResolver(UserFormValidation),
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+    },
+  });
+
+  // 2. Define a submit handler.
+  async function onSubmit({
+    name,
+    email,
+    phone,
+  }: z.infer<typeof UserFormValidation>) {
+    setIsLoading(true);
+
+    try {
+      const userData = { name, email, phone };
+      const user = await createUser(userData);
+      if (user) router.push(`/patients/${user.$id}/register`);
+    } catch (error) {
+      console.error("Error creating user:", error); // Log detailed error information
+    }
+    setIsLoading(false);
+  }
+
+  return (
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-12 flex-1"
+      >
+        <section className=" space-y-6">
+          <h1 className="header">Welcome 👋 </h1>
+          <p className="text-gray-300">
+            Let us know a bit about you to get started.
+          </p>
+        </section>
+        <section className="space-y-6">
+          <div className="mb-9 space-y-1">
+            <h2 className="sub-header">Personal Information</h2>
           </div>
+        </section>
+        <CustomFormField
+          fieldType={FormFieldType.INPUT}
+          control={form.control}
+          name="name" // Fix here
+          label="Full name"
+          placeholder="John Doe"
+          iconSrc="/icons/user.svg"
+          iconAlt="user"
+        />
+        <div className="flex flex-col gap-6 xl:flex-row">
+          <CustomFormField
+            fieldType={FormFieldType.INPUT}
+            control={form.control}
+            name="email" // Fix here
+            label="Email"
+            placeholder="Enter your email"
+            iconSrc="/icons/email.svg"
+            iconAlt="mail"
+          />
+          <CustomFormField
+            fieldType={FormFieldType.PHONE_INPUT}
+            control={form.control}
+            name="phone" // Fix here
+            label="Phone number"
+            placeholder="Enter your phone number"
+          />
         </div>
-      </section>
-      <Image
-        src="/images/register-img.png"
-        alt="onboarding"
-        width={1000}
-        height={1000}
-        className="size-img max-w-[390px]"
-      />
-    </div>
-            );
-         
+        <div className="flex flex-col gap-6 xl:flex-row">
+          <CustomFormField
+            fieldType={FormFieldType.DATE_PICKER}
+            control={form.control}
+            name="birthDate" // Fix here
+            label="Date of Birth"
+          />
+          <CustomFormField
+            fieldType={FormFieldType.SKELETON}
+            control={form.control}
+            name="gender" // Fix here
+            label="Gender"
+            renderSkeleton={(field) => (
+              <FormControl>
+                <RadioGroup className="flex h-11 gap-6 xl:justify-between">
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  {GenderOptions.map((gender) => (
+                    <div key={gender} className="radio-group">
+                      <RadioGroupItem value={gender} id={gender} />
+                      <Label htmlFor={gender} className="cursor-pointer">
+                        {gender}
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              </FormControl>
+            )}
+          />
+        </div>
+
+        <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
+      </form>
+    </Form>
+  );
 };
 
 export default RegisterForm;
