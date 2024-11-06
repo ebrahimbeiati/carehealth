@@ -1,45 +1,42 @@
-import Image from 'next/image'
-import Link from 'next/link'
-import RegisterForm from '@/components/forms/RegisterForm'
-import { getUser } from '@/lib/actions/patient.actions'
-const Register =async ({params:{userId}}:SearchParamProps) => {
+import Image from "next/image";
+import { redirect } from "next/navigation";
+
+import RegisterForm from "@/components/forms/RegisterForm";
+import { getPatient, getUser } from "@/lib/actions/patient.actions";
+
+const Register = async ({ params: { userId } }: SearchParamProps) => {
   const user = await getUser(userId);
-  
+  const patient = await getPatient(userId);
 
-
+  if (patient) redirect(`/patients/${userId}/new-appointment`);
 
   return (
     <div className="flex h-screen max-h-screen">
-      {/* Otp verification*/}
-      <section className="remove-scrollbar container my-auto">
-        <div className="sub-container max-w[496]">
+      <section className="remove-scrollbar container">
+        <div className="sub-container max-w-[860px] flex-1 flex-col py-10">
           <Image
             src="/logo.png"
-            alt="logo"
-            width={496}
-            height={496}
-            className="mb-12 h-10 w-fit rounded"
+            height={1000}
+            width={1000}
+            alt="patient"
+            className="mb-12 h-10 w-fit"
           />
-          <RegisterForm  user={user}/>
-          <div className="flex justify-between text-14-regular mt-20">
-            <p className="text-dark-600 justify-end xl:text-left">
-              Care Health © All rights reserved.
-            </p>
-            <Link href="/?admin=true" className="text-green-500">
-              Admin
-            </Link>
-          </div>
+
+          <RegisterForm user={user} />
+
+          <p className="copyright py-12">© 2024 CarePluse</p>
         </div>
       </section>
+
       <Image
         src="/images/register-img.png"
-        alt="onboarding"
-        width={1000}
         height={1000}
-        className="size-img max-w-[390px] bg-covered"
+        width={1000}
+        alt="patient"
+        className="side-img max-w-[390px]"
       />
     </div>
   );
-}
+};
 
 export default Register;

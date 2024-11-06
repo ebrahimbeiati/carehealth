@@ -7,45 +7,61 @@ import { Form, FormControl, FormField } from "@/components/ui/form";
 import CustomFormField from "../CustomFormField";
 import SubmitButton from "../SubmitButton";
 import { useState } from "react";
-import { UserFormValidation } from "@/lib/validation";
+import { PatientFormValidation } from "@/lib/validation";
 import { useRouter } from "next/navigation";
-import { createUser } from "@/lib/actions/patient.actions";
 import { FormFieldType } from "./PatientForm";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import { GenderOptions, Doctors, IdentificationTypes } from "@/constants";
+import {
+  GenderOptions,
+  Doctors,
+  IdentificationTypes,
+  PatientFormDefaultValues,
+} from "@/constants";
 import { Label } from "../ui/label";
 import { SelectItem } from "../ui/select";
 import Image from "next/image";
-import {FileUploader}  from "../FileUploader";
-
-
+import { FileUploader } from "../FileUploader";
+import { registerPatient } from "@/lib/actions/patient.actions";
 
 
 const RegisterForm = ({user}:{user:User}) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  // 1. Define your form.
-  const form = useForm<z.infer<typeof UserFormValidation>>({
-    resolver: zodResolver(UserFormValidation),
+  
+  const form = useForm<z.infer<typeof PatientFormValidation>>({
+    resolver: zodResolver(PatientFormValidation),
+    // @ts-expect-error here
     defaultValues: {
+      ...PatientFormDefaultValues,
       name: "",
       email: "",
       phone: "",
     },
   });
 
-  // 2. Define a submit handler.
-  async function onSubmit({
-    name,
-    email,
-    phone,
-  }: z.infer<typeof UserFormValidation>) {
+  async function onSubmit(values: z.infer<typeof PatientFormValidation>) {
     setIsLoading(true);
 
+    let formData;
+    if (values.identificationDocument && values.identificationDocument.length > 0) {
+      const blobFile = new Blob([values.identificationDocument[0]], {
+        type: values.identificationDocument[0].type,
+      })
+      formData = new FormData();
+      formData.append("blobFile", blobFile);
+      formData.append("fileName", values.identificationDocument[0].name)
+    }
+
     try {
-      const userData = { name, email, phone };
-      const user = await createUser(userData);
-      if (user) router.push(`/patients/${user.$id}/register`);
+      const patientData = {
+        ...values,
+        userId: user.$id,
+        identificationDocument: formData,
+        birthDate: new Date(values.birthDate),
+      };
+      //@ts-expect-error here
+      const patient = await registerPatient(patientData);
+      if (patient) router.push(`/patients/${user.$id}/new-appointment`);
     } catch (error) {
       console.error("Error creating user:", error); // Log detailed error information
     }
@@ -260,21 +276,48 @@ const RegisterForm = ({user}:{user:User}) => {
           label="Identification number"
           placeholder="6565768879"
         />
-        
-           <CustomFormField
-            fieldType={FormFieldType.SKELETON}
-            control={form.control}
-            name="identificationDocument"
-            label="Scanned copy of  identification document"
-            renderSkeleton={(field) => (
-              <FormControl>
-                <FileUploader/>
-              </FormControl>
-            )}
-          />
-     
 
+        <CustomFormField
+          fieldType={FormFieldType.SKELETON}
+          control={form.control}
+          name="identificationDocument"
+          label="Scanned copy of  identification document"
+          renderSkeleton={(field) => (
+            <FormControl>
+              <FileUploader files={field.value} onChange={field.onChange} />
+            </FormControl>
+          )}
+        />
 
+        <section className="space-y-6">
+          <div className="mb-9 space-y-1">
+            <h2 className="sub-header">Consent and privacy</h2>
+          </div>
+        </section>
+        <CustomFormField
+          fieldType={FormFieldType.CHECKBOX}
+          control={form.control}
+          name="treatmentConsent" // Fix here
+          label="I consent to treatment"
+        />
+        <CustomFormField
+          fieldType={FormFieldType.CHECKBOX}
+          control={form.control}
+          name="disclosureConsent" // Fix here
+          label="I consent to disclosure"
+        />
+        <CustomFormField
+          fieldType={FormFieldType.CHECKBOX}
+          control={form.control}
+          name="privacyConsent" // Fix here
+          label="I consent to privacy policy"
+        />
+
+        <section className="space-y-6">
+          <div className="mb-9 space-y-1">
+            <h2 className="sub-header">Identification and verification</h2>
+          </div>
+        </section>
 
         <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
       </form>
