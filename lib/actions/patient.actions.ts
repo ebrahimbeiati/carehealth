@@ -1,10 +1,10 @@
 import { ID, Query } from "appwrite"; // Adjust imports if needed
 import {
-  BUCKET_ID,
-  DATABASE_ID,
+  NEXT_PUBLIC_BUCKET_ID,
+  NEXT_PUBLIC_DATABASE_ID,
   NEXT_PUBLIC_ENDPOINT,
   PATIENT_COLLECTION_ID,
-  PROJECT_ID,
+  NEXT_PUBLIC_PROJECT_ID,
   databases,
   storage,
   users,
@@ -82,20 +82,24 @@ export const registerPatient = async ({
         identificationDocument?.get("fileName") as string
       )
 
-      file = await storage.createFile(BUCKET_ID!, ID.unique(), inputFile)
+      file = await storage.createFile(
+        NEXT_PUBLIC_BUCKET_ID!,
+        ID.unique(),
+        inputFile
+      );
     }
 
     // Create new patient document -> https://appwrite.io/docs/references/cloud/server-nodejs/databases#createDocument
     const newPatient = await databases.createDocument(
-      DATABASE_ID!,
+      NEXT_PUBLIC_DATABASE_ID!,
       PATIENT_COLLECTION_ID!,
       ID.unique(),
       {
-        identificationDocumentId: file?.$id || null,
-        identificationDocumentUrl:`${NEXT_PUBLIC_ENDPOINT}/storage/buckets/${BUCKET_ID}/files/${file?.$id}/view?project=${PROJECT_ID}`,
-        ...patient
+        identificationDocumentId: file?.$id ?? null,
+        identificationDocumentUrl: `${NEXT_PUBLIC_ENDPOINT}/storage/buckets/${NEXT_PUBLIC_BUCKET_ID}/files/${file?.$id}/view?project=${NEXT_PUBLIC_PROJECT_ID}`,
+        ...patient,
       }
-    )
+    );
 
     return parseStringify(newPatient);
   } catch (error) {
@@ -106,7 +110,7 @@ export const registerPatient = async ({
 export const getPatient = async (userId: string) => {
   try {
     const patients = await databases.listDocuments(
-      DATABASE_ID!,
+      NEXT_PUBLIC_DATABASE_ID!,
       PATIENT_COLLECTION_ID!,
       [Query.equal("userId", [userId])]
     );
