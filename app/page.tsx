@@ -7,7 +7,7 @@ export default function Home() {
     <div className="flex h-screen max-h-screen">
       {/* Otp verification*/}
       <section className="remove-scrollbar container my-auto">
-        <div className="sub-container max-w[496]">
+        <div className="sub-container max-w[496px]">
           <Image
             src="/logo.png"
             alt="logo"
