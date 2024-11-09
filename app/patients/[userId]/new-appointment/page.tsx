@@ -21,7 +21,7 @@ export default async function NewAppointment({ params: { userId } }: SearchParam
             userId={userId}
             patientId={patient.$id}
           />
-            <p className="text-dark-600 justify-end xl:text-left">
+            <p className="copyright py-12 mt-8">
               Care Health © All rights reserved.
             </p>
             
