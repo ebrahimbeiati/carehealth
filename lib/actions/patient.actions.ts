@@ -103,12 +103,14 @@ export const registerPatient = async ({
   }
 };
 
+
+//get patient
 export const getPatient = async (userId: string) => {
   try {
     const patients = await databases.listDocuments(
       databaseId!,
       patientCollectionId!,
-      [Query.equal("userId", [userId])]
+      [Query.equal("userId", userId)]
     );
 
     return parseStringify(patients.documents[0]);
@@ -119,44 +121,3 @@ export const getPatient = async (userId: string) => {
     );
   }
 };
-
-
-
-
-
-
-
-
-// Correct path to your config
-
-// export const getPatient = async (userId: string) => {
-//   try {
-//     // Ensure databaseId and patientCollectionId are valid
-//     if (!databaseId || !patientCollectionId) {
-//       throw new Error(
-//         "Missing required configuration: databaseId or patientCollectionId"
-//       );
-//     }
-
-//     // Fetch the patient documents from Appwrite database
-//     const patients = await databases.listDocuments(
-//       databaseId!, // Ensure databaseId is available
-//       patientCollectionId!, // Ensure patientCollectionId is available
-//       [Query.equal("userId", [userId])] // Query to find the patient based on userId
-//     );
-
-//     // Check if patient exists in the documents list
-//     if (patients.documents.length === 0) {
-//       throw new Error(`Patient with userId ${userId} not found.`);
-//     }
-
-//     // Return the patient document (first one, assuming unique userId)
-//     return parseStringify(patients.documents[0]);
-//   } catch (error) {
-//     console.error(
-//       "An error occurred while retrieving the patient details:",
-//       error
-//     );
-//     return { success: false, message: error.message }; // Return structured error
-//   }
-// };

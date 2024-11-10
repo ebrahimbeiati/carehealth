@@ -1,10 +1,6 @@
-'use server'
+// 'use server'
 import { ID } from "node-appwrite"; // Adjust imports if needed
-import {
-  appointmentCollectionId,
-  databases,
-  databaseId,
-} from "../appwrite.config";
+import { appointmentCollectionId, databases, databaseId } from "../appwrite.config";
 import { parseStringify } from "../utils";
 
 export const createAppointment = async (

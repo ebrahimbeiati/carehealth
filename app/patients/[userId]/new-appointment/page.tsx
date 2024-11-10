@@ -1,9 +1,11 @@
 import Image from "next/image";
-import AppointmentForm from "@/components/forms/AppointmentForm";
+
+import  AppointmentForm  from "@/components/forms/AppointmentForm";
 import { getPatient } from "@/lib/actions/patient.actions";
 
-export default async function NewAppointment({ params: { userId } }: SearchParamProps) {
-  const patient = await getPatient(userId)
+const Appointment = async ({ params: { userId } }: SearchParamProps) => {
+  const patient = await getPatient(userId);
+
   return (
     <div className="flex h-screen max-h-screen">
       {/* Otp verification*/}
@@ -21,10 +23,9 @@ export default async function NewAppointment({ params: { userId } }: SearchParam
             userId={userId}
             patientId={patient.$id}
           />
-            <p className="copyright py-12 mt-8">
-              Care Health © All rights reserved.
-            </p>
-            
+          <p className="copyright py-12 mt-8">
+            Care Health © All rights reserved.
+          </p>
         </div>
       </section>
       <Image
@@ -36,4 +37,6 @@ export default async function NewAppointment({ params: { userId } }: SearchParam
       />
     </div>
   );
-}
+};
+
+export default Appointment;

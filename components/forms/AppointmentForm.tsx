@@ -15,6 +15,7 @@ import Image from "next/image";
 import { createAppointment } from "@/lib/actions/appointment.actions";
 import { getAppointmentSchema } from "@/lib/validation";
 
+
 const AppointmentForm = ({ type, userId, patientId }: {
     userId: string;
     patientId: string;
@@ -81,11 +82,13 @@ const AppointmentForm = ({ type, userId, patientId }: {
 //   }
     async function onSubmit(values: z.infer<typeof AppointmentFormValidation>) {
       setIsLoading(true);
+
       let status;
       switch (type) {
         case "schedule":
           status = "scheduled";
           break;
+        
         case "cancel":
           status = "cancelled";
           break;
