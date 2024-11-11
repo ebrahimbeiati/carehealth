@@ -20,5 +20,22 @@ console.log("New Appointment:", newAppointment);
   } catch (error) {
     console.error("An error occurred while creating a new appointment:", error);
   }
-};
+}
+
+export const getAppointment = async(appointmentId: string) => {
+  try {
+    const appointment = await databases.getDocument(
+      databaseId!,
+      appointmentCollectionId!,
+      appointmentId,
+      
+    );
+    return parseStringify(appointment);
+  } catch (error) {
+    console.error(
+      "An error occurred while retrieving the patient details:",
+      error
+    );
+  }
+}
 
