@@ -5,7 +5,6 @@ import StatCard from '@/components/StatCard'
 import { getRecentAppointments } from '@/lib/actions/appointment.actions'
 import {DataTable} from '@/components/table/DataTable'
 import { columns } from '@/components/table/columns'
-import { Payment } from '@/components/table/columns'
 
 
 

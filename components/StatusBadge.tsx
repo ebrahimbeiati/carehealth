@@ -1,6 +1,7 @@
 import clsx from 'clsx'
 import Image from 'next/image'
 import React from 'react'
+import { StatusIcon } from '@/constants'
 
 const StatusBadge = ({ status }: { status: Status }) => {
     
@@ -10,7 +11,12 @@ const StatusBadge = ({ status }: { status: Status }) => {
         'bg-yellow-600': status === 'pending',
         'bg-red-600': status === 'cancelled',
       })}>
-          <Image src={StatusIcons[status]} alt={status} width={16} height={16} className="h-fit w-4" />
+          <Image src={StatusIcon[status]} alt={status} width={24} height={24} className="h-fit w-4" />
+          <p className={clsx('text-12-semibold capitalize', {
+              'text-green-500': status === 'scheduled',
+              'text-blue-500': status === 'pending',
+              'text-red-500': status === 'cancelled',
+          })}>{status}</p>
     </div>
   )
 }
