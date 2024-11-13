@@ -67,7 +67,7 @@ export const getRecentAppointments = async () => {
       ...counts,
       documents: appointments.documents,
     }
-    return parseStringify(appointments);
+    return parseStringify(data);
   } catch (error) {
     console.error(
       "An error occurred while retrieving the patient details:",
@@ -75,3 +75,4 @@ export const getRecentAppointments = async () => {
     );
   }
 }
+
