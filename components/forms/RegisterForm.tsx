@@ -23,50 +23,79 @@ import Image from "next/image";
 import { FileUploader } from "../FileUploader";
 import { registerPatient } from "@/lib/actions/patient.actions";
 
+interface User {
+  $id: string;
 
-const RegisterForm = ({user}:{user:User}) => {
+}
+
+const RegisterForm = ({ user }: { user: User }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const form = useForm<z.infer<typeof PatientFormValidation>>({
     resolver: zodResolver(PatientFormValidation),
-    // @ts-expect-error here
     defaultValues: {
       ...PatientFormDefaultValues,
-      name: "",
       email: "",
-      phone: "",
     },
   });
 
-  async function onSubmit(values: z.infer<typeof PatientFormValidation>) {
-    setIsLoading(true);
+const onSubmit = async (values: z.infer<typeof PatientFormValidation>) => {
+  setIsLoading(true);
 
-    let formData;
-    if (values.identificationDocument && values.identificationDocument.length > 0) {
-      const blobFile = new Blob([values.identificationDocument[0]], {
-        type: values.identificationDocument[0].type,
-      })
-      formData = new FormData();
-      formData.append("blobFile", blobFile);
-      formData.append("fileName", values.identificationDocument[0].name)
-    }
+  // Store file info in form data as
+  let formData;
+  if (
+    values.identificationDocument &&
+    values.identificationDocument?.length > 0
+  ) {
+    const blobFile = new Blob([values.identificationDocument[0]], {
+      type: values.identificationDocument[0].type,
+    });
 
-    try {
-      const patientData = {
-        ...values,
-        userId: user.$id,
-        identificationDocument: formData,
-        birthDate: new Date(values.birthDate),
-      };
-      //@ts-expect-error here
-      const patient = await registerPatient(patientData);
-      if (patient) router.push(`/patients/${user.$id}/new-appointment`);
-    } catch (error) {
-      console.error("Error creating user:", error); // Log detailed error information
-    }
-    setIsLoading(false);
+    formData = new FormData();
+    formData.append("blobFile", blobFile);
+    formData.append("fileName", values.identificationDocument[0].name);
   }
+
+  try {
+    const patient = {
+      userId: user.$id,
+      name: values.name,
+      email: values.email,
+      phone: values.phone,
+      birthDate: new Date(values.birthDate),
+      gender: values.gender,
+      address: values.address,
+      occupation: values.occupation,
+      emergencyContactName: values.emergencyContactName,
+      emergencyContactNumber: values.emergencyContactNumber,
+      primaryPhysician: values.primaryPhysician,
+      insuranceProvider: values.insuranceProvider,
+      insurancePolicyNumber: values.insurancePolicyNumber,
+      allergies: values.allergies,
+      currentMedication: values.currentMedication,
+      familyMedicalHistory: values.familyMedicalHistory,
+      pastMedicalHistory: values.pastMedicalHistory,
+      identificationType: values.identificationType,
+      identificationNumber: values.identificationNumber,
+      identificationDocument: values.identificationDocument
+        ? formData
+        : undefined,
+      privacyConsent: values.privacyConsent,
+    };
+
+    const newPatient = await registerPatient(patient);
+
+    if (newPatient) {
+      router.push(`/patients/${user.$id}/new-appointment`);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+
+  setIsLoading(false);
+};
 
   return (
     <Form {...form}>
@@ -276,12 +305,11 @@ const RegisterForm = ({user}:{user:User}) => {
           label="Identification number"
           placeholder="6565768879"
         />
-
         <CustomFormField
           fieldType={FormFieldType.SKELETON}
           control={form.control}
           name="identificationDocument"
-          label="Scanned copy of  identification document"
+          label="Scanned Copy of Identification Document"
           renderSkeleton={(field) => (
             <FormControl>
               <FileUploader files={field.value} onChange={field.onChange} />

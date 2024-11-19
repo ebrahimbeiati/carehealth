@@ -1,4 +1,4 @@
-// 'use server'
+'use server'
 import { ID, Query } from "node-appwrite"; // Adjust imports if needed
 import { appointmentCollectionId, databases, databaseId } from "../appwrite.config";
 import { parseStringify, formatDateTime } from "../utils";

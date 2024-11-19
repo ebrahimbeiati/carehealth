@@ -2,7 +2,6 @@
 // import * as sdk from "node-appwrite";
 
 
-
 // const client = new sdk.Client()
 //   .setEndpoint(process.env.NEXT_PUBLIC_ENDPOINT!)
 //   .setProject(process.env.NEXT_PUBLIC_PROJECT_ID!)
@@ -12,6 +11,7 @@
 // export const users = new sdk.Users(client);
 // export const messaging = new sdk.Messaging(client);
 // export const storage = new sdk.Storage(client);
+
 // export const databaseId = process.env.NEXT_PUBLIC_DATABASE_ID!;
 // export const patientCollectionId = process.env.NEXT_PUBLIC_PATIENT_COLLECTION_ID!;
 // export const doctorCollectionId = process.env.NEXT_PUBLIC_DOCTOR_COLLECTION_ID!;
@@ -25,9 +25,9 @@
 import * as sdk from "node-appwrite";
 
 const client = new sdk.Client()
-  .setEndpoint(process.env.NEXT_PUBLIC_ENDPOINT!) // Safe to be public
-  .setProject(process.env.NEXT_PUBLIC_PROJECT_ID!) // Safe to be public
-  .setKey(process.env.NEXT_PUBLIC_API_KEY!);                     // Sensitive, kept server-side (no `NEXT_PUBLIC_`)
+  .setEndpoint(process.env.NEXT_PUBLIC_ENDPOINT!) 
+  .setProject(process.env.NEXT_PUBLIC_PROJECT_ID!) 
+  .setKey(process.env.NEXT_PUBLIC_API_KEY!);                     
 
 export const databases = new sdk.Databases(client);
 export const users = new sdk.Users(client);
@@ -45,3 +45,5 @@ export const endpoint = process.env.NEXT_PUBLIC_ENDPOINT;
 export const doctorCollectionId = process.env.NEXT_PUBLIC_DOCTOR_COLLECTION_ID!;  // Kept private
 export const appointmentCollectionId =
   process.env.NEXT_PUBLIC_APPOINTMENT_COLLECTION_ID!;  // Kept private
+
+

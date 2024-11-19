@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Control } from "react-hook-form";
-import { FormFieldType } from "./forms/PatientForm";
 import Image from "next/image";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
@@ -34,17 +33,19 @@ interface CustomProps {
   dateFormat?: string,
   showTimeSelect?: boolean,
   children?: React.ReactNode,
+  value?: any,
   renderSkeleton?: (field: any) => React.ReactNode,
 }
-export enum FormFieldType{
+export enum FormFieldType {
   INPUT = "input",
   TEXTAREA = "textarea",
   CHECKBOX = "checkbox",
   PHONE_INPUT = "phoneInput",
   DATE_PICKER = "datePicker",
   SELECT = "select",
-SKELETON = "skeleton",
+  SKELETON = "skeleton",
 }
+
 
 const RenderField = ({ field, props }: { field: any; props: CustomProps}) => {
   const { fieldType, placeholder, iconSrc, iconAlt, disabled, dateFormat, showTimeSelect, renderSkeleton } = props;
@@ -58,7 +59,7 @@ const RenderField = ({ field, props }: { field: any; props: CustomProps}) => {
               src={iconSrc}
               height={24}
               width={24}
-              alt={iconAlt || 'icon'}
+              alt={iconAlt || "icon"}
               className="ml-2"
             />
           )}
@@ -67,11 +68,11 @@ const RenderField = ({ field, props }: { field: any; props: CustomProps}) => {
               {...field}
               placeholder={placeholder}
               className="shad-input border-0 bg-slate-200"
+              value={props.value}
             />
           </FormControl>
-        
         </div>
-      )
+      );
     case FormFieldType.TEXTAREA:
       return (
           <FormControl>
@@ -161,14 +162,11 @@ const RenderField = ({ field, props }: { field: any; props: CustomProps}) => {
         </FormControl>
       )
     
-    
-
-
-    
     default:
       break;
   }
 }
+
 
 const CustomFormField = (props: CustomProps) => {
   const { control, fieldType, name, label } = props;
